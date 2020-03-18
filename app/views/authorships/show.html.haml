@@ -1,0 +1,11 @@
+.container-fluid
+  .row
+    .col-md-1
+    .col-md-10
+      %p
+        %strong Paper:
+        = @authorship.paper.title
+      %p
+        %strong Author:
+        = @authorship.author.full_name
+      = link_to 'Back', authorships_path 

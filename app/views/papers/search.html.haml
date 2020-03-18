@@ -1,0 +1,19 @@
+.container-fluid
+  .row
+    .col-md-1
+    .col-md-10
+      %h1 
+        Title and Abstract Search
+        &mdash; 
+        = pluralize(@papers_length, "Results")
+      
+      %table.table
+        %thead
+          %th Title
+          %th Abstract
+        %tbody
+          - @papers.each do |paper|
+            %tr
+              %td= link_to paper.title, paper
+              %td= paper.abstract
+      = paginate @papers

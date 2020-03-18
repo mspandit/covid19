@@ -1,0 +1,72 @@
+<%= form_with(model: author, local: true) do |form| %>
+  <% if author.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(author.errors.count, "error") %> prohibited this author from being saved:</h2>
+
+      <ul>
+      <% author.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :paper_id %>
+    <%= form.text_field :paper_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :first %>
+    <%= form.text_field :first %>
+  </div>
+
+  <div class="field">
+    <%= form.label :middle %>
+    <%= form.text_field :middle %>
+  </div>
+
+  <div class="field">
+    <%= form.label :last %>
+    <%= form.text_field :last %>
+  </div>
+
+  <div class="field">
+    <%= form.label :suffix %>
+    <%= form.text_field :suffix %>
+  </div>
+
+  <div class="field">
+    <%= form.label :laboratory %>
+    <%= form.text_field :laboratory %>
+  </div>
+
+  <div class="field">
+    <%= form.label :institution %>
+    <%= form.text_field :institution %>
+  </div>
+
+  <div class="field">
+    <%= form.label :addr_line %>
+    <%= form.text_field :addr_line %>
+  </div>
+
+  <div class="field">
+    <%= form.label :post_code %>
+    <%= form.text_field :post_code %>
+  </div>
+
+  <div class="field">
+    <%= form.label :settlement %>
+    <%= form.text_field :settlement %>
+  </div>
+
+  <div class="field">
+    <%= form.label :country %>
+    <%= form.text_field :country %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

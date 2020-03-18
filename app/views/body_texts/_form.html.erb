@@ -1,0 +1,27 @@
+<%= form_with(model: body_text, local: true) do |form| %>
+  <% if body_text.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(body_text.errors.count, "error") %> prohibited this body_text from being saved:</h2>
+
+      <ul>
+      <% body_text.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :content %>
+    <%= form.text_area :content %>
+  </div>
+
+  <div class="field">
+    <%= form.label :search_vector %>
+    <%= form.text_field :search_vector %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

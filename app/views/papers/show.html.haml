@@ -1,0 +1,15 @@
+.container-fluid
+  .row
+    .col-md-1
+    .col-md-10
+      %h1= @paper.title
+      %p ID: #{@paper.paper_id}
+      %strong
+        - @paper.authorships.each do |as| 
+          = link_to as.author.full_name, as.author
+          ,
+      %h2 Abstract
+      = @paper.abstract
+      %h2 Text
+      - @paper.body_texts.each do |bt|
+        %p= bt.content

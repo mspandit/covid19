@@ -1,0 +1,21 @@
+.container-fluid
+  .row
+    .col-md-1
+    .col-md-10
+      %h1= pluralize(@authors.length, "Authors")
+      
+      %table.table
+        %thead
+          %tr
+            %th Full Name
+            %th Laboratory
+            %th Institution
+            %th
+        %tbody
+          - @authors.each do |author|
+            %tr
+              %td= author.full_name
+              %td= author.laboratory
+              %td= author.institution
+              %td= link_to 'Show', author
+      = paginate @authors

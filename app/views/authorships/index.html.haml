@@ -1,0 +1,18 @@
+.container-fluid
+  .row
+    .col-md-1
+    .col-md-10
+      %h1 Authorships
+      %table.table
+        %thead
+          %tr
+            %th Paper
+            %th Author
+            %th
+        %tbody
+          - @authorships.each do |as|
+            %tr
+              %td= link_to as.paper.title, as.paper
+              %td= link_to as.author.full_name, as.author
+              %td= link_to 'Show', as
+      = paginate @authorships

@@ -1,0 +1,19 @@
+.container-fluid
+  .row
+    .col-md-1
+    .col-md-10
+      %h1 
+        Full Text Search
+        &mdash; 
+        = pluralize(@body_texts_length, "Results")
+      
+      %table.table
+        %thead
+          %th Title
+          %th Text
+        %tbody
+          - @body_texts.each do |bt|
+            %tr
+              %td= link_to bt.paper.title, bt.paper
+              %td= bt.content
+      = paginate @body_texts

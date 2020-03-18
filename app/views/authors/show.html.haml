@@ -1,0 +1,15 @@
+.container-fluid
+  .row
+    .col-md-1
+    .col-md-10
+      %h1= @author.full_name
+      %h2= @author.laboratory
+      %h2= @author.institution
+      %p= @author.addr_line
+      %p= @author.post_code
+      %p= @author.settlement
+      %p= @author.country
+      %h2 Papers
+      %ul
+        - @author.authorships.each do |as|
+          %li= link_to as.paper.title, as.paper

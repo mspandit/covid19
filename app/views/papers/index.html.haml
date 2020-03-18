@@ -1,0 +1,23 @@
+.container-fluid
+  .row
+    .col-md-1
+    .col-md-10
+      %h1= pluralize(Paper.count, "Papers")
+      Source: Commercial use subset of
+      = link_to "COVID-19 Open Research Dataset (CORD-19)", "https://pages.semanticscholar.org/coronavirus-research"
+
+      %table.table
+        %thead
+          %tr
+            %th Paper ID
+            %th Title
+            %th Abstract
+            %th
+        %tbody
+          - @papers.each do |paper|
+            %tr
+              %td #{paper.paper_id[0..10]}...
+              %td #{paper.title[0..100]}...
+              %td #{paper.abstract[0..100]}...
+              %td= link_to 'Show', paper
+      = paginate @papers

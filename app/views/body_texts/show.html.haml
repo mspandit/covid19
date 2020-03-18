@@ -1,0 +1,16 @@
+.container-fluid
+  .row
+    .col-md-1
+    .col-md-10
+      %p
+        %strong Paper:
+        = link_to @body_text.paper.title, @body_text.paper
+      %p
+        %strong Sequence:
+        = @body_text.sequence
+      %p
+        %strong Content:
+        = @body_text.content
+      %p
+        %strong Section:
+        = @body_text.section

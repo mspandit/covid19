@@ -1,0 +1,24 @@
+.container-fluid
+  .row
+    .col-md-1
+    .col-md-10
+      %h1 Body Texts
+      %table.table
+        %thead
+          %tr
+            %th Paper
+            %th Sequence
+            %th Content
+            %th Section
+            %th Search Vector
+            %th
+        %tbody
+          - @body_texts.each do |body_text|
+            %tr
+              %td= link_to body_text.paper.title, body_text.paper
+              %td= body_text.sequence
+              %td= body_text.content
+              %td= body_text.section
+              %td= body_text.search_vector
+              %td= link_to 'Show', body_text
+      = paginate @body_texts
