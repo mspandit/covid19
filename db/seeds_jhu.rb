@@ -10,7 +10,7 @@ require 'json'
 require 'faraday'
 
 ROOT_DIRS = ['../COVID-19/csse_covid_19_data/csse_covid_19_daily_reports/']
-ROOT_URL = "development" == ENV['RAILS_ENV'] ? "http://localhost:3000/" : "http://cord19.herokuapp.com/"
+ROOT_URL = "development" == ENV['RAILS_ENV'] ? "http://localhost:3000/" : "http://www.know-covid19.info/"
 
 if ENV["SECRET"].nil? || ENV["SECRET"].empty?
   puts("Set SECRET environment variable. Exiting...")
@@ -24,7 +24,7 @@ def safe_col(row, header, field)
 end
 
 ROOT_DIRS.each do |root_dir|
-  Dir[root_dir + "/*.csv"].each do |filename|
+  Dir[root_dir + "/03-19-2020.csv"].each do |filename|
     open(filename) do |f|
       CSV.parse(f.read, headers: true) do |row|
         region_id = JSON.parse(

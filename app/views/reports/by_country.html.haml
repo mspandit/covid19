@@ -6,7 +6,13 @@
         = pluralize(@reports_length, "Reports") 
         for 
         = params[:country]
-      %canvas#myChart{ width: 400, height: 200 }
+      #chart{ style: "display: none;" }
+        %canvas{ width: 400, height: 200 }
+        .custom-control.custom-switch
+          %input.custom-control-input#stacked-switch{ type: "checkbox" }
+          %label.custom-control-label{ for: "stacked-switch" } Stacked Chart
+      #loading
+        Loading...
       %table.table
         %thead
           %tr
@@ -35,5 +41,12 @@
       = paginate @reports
 :javascript
   $(function() {
-    chart('#{by_country_reports_url(params[:country], format: :json)}')
+    with_data('#{by_country_reports_url(country: params[:country], format: :json)}', function (data) {
+      $('#loading').hide()
+      $('#chart').show()
+      chart = chart(data, $('#stacked-switch').get(0).checked)
+      $('#stacked-switch').change(function (event) {
+        redraw(chart, this.checked)
+      })
+    })
   });

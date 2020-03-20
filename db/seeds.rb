@@ -9,7 +9,7 @@ require 'json'
 require 'faraday'
 
 ROOT_DIRS = ['public/comm_use_subset']
-ROOT_URL = "development" == ENV['RAILS_ENV'] ? "http://localhost:3000/" : "http://cord19.herokuapp.com/"
+ROOT_URL = "development" == ENV['RAILS_ENV'] ? "http://localhost:3000/" : "http://www.know-covid19.info/"
 
 if ENV["SECRET"].nil? || ENV["SECRET"].empty?
   puts("Set SECRET environment variable. Exiting...")

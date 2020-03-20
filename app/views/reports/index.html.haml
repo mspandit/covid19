@@ -8,10 +8,22 @@
       %p
         Source: 
         = link_to "Johns Hopkins University Center for Systems Science and Engineering", "https://github.com/CSSEGISandData/COVID-19"
+      %p 
+        See also 
+        = link_to "Coronavirus COVID-19 (2019-nCoV)", "https://www.arcgis.com/apps/opsdashboard/index.html#/bda7594740fd40299423467b48e9ecf6"
+      %p
+        See also
+        = link_to "Coronavirus Dashboard", "https://ncov2019.live/data"
       = form_tag('#', method: :get, class: "form-inline my-2 my-lg-0") do
         = select_tag("country", options_for_select([['Select Country', nil]] + Region.all.map{ |r| [r.country, r.country] }.uniq.sort))
         %button.btn.btn-outline-success.my-2.my-sm-0{ type: "submit" } Go
-      %canvas#myChart{ width: 400, height: 200 }
+      #chart{ style: "display: none;" }
+        %canvas{ width: 400, height: 200 }
+        .custom-control.custom-switch
+          %input.custom-control-input#stacked-switch{ type: "checkbox" }
+          %label.custom-control-label{ for: "stacked-switch" } Stacked Chart
+      #loading
+        Loading...
       %p
         Click a region or country for specific reports and chart.
       %table.table
@@ -37,9 +49,16 @@
       = paginate @reports
 :javascript
   $(function() {
-    chart('#{reports_url(params[:region_id], format: :json)}')
     $('form').attr('action', "/reports/by_country/" + $('form select').val());
     $('form').change(function (event) {
       $('form').attr('action', "/reports/by_country/" + $('form select').val());
+    })
+    with_data('#{reports_url(format: :json)}', function (data) {
+      $('#loading').hide()
+      $('#chart').show()
+      chart = chart(data, $('#stacked-switch').get(0).checked)
+      $('#stacked-switch').change(function (event) {
+        redraw(chart, this.checked)
+      })
     })
   });
