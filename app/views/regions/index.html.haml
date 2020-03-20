@@ -1,0 +1,23 @@
+.container-fluid
+  .row
+    .col-md-1
+    .col-md-10
+      %h1= pluralize(@regions_length, "Regions")
+      %table.table
+        %thead
+          %tr
+            %th Province
+            %th Country
+            %th Latitude
+            %th Longitude
+        %tbody
+          - @regions.each do |region|
+            %tr
+              %td
+                - if region.province
+                  = link_to region.province, by_region_reports_path(region.id)
+              %td= link_to region.country, by_country_reports_path(region.country)
+              %td= region.latitude
+              %td= region.longitude
+
+      = paginate @regions

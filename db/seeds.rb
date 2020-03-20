@@ -7,7 +7,6 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 require 'json'
 require 'faraday'
-require 'digest'
 
 ROOT_DIRS = ['public/comm_use_subset']
 ROOT_URL = "development" == ENV['RAILS_ENV'] ? "http://localhost:3000/" : "http://cord19.herokuapp.com/"

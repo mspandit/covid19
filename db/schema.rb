@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_17_214122) do
+ActiveRecord::Schema.define(version: 2020_03_19_031531) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -56,6 +56,24 @@ ActiveRecord::Schema.define(version: 2020_03_17_214122) do
     t.datetime "updated_at", null: false
     t.index ["search_vector"], name: "abstracts_search_idx", using: :gin
     t.index ["search_vector"], name: "body_texts_search_idx", using: :gin
+  end
+
+  create_table "regions", force: :cascade do |t|
+    t.string "province"
+    t.string "country"
+    t.float "latitude"
+    t.float "longitude"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "reports", force: :cascade do |t|
+    t.integer "region_id"
+    t.integer "confirmed"
+    t.integer "deaths"
+    t.integer "recovered"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
 end

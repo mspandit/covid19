@@ -6,6 +6,8 @@
     = csp_meta_tag
     = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
     = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
+    = javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js'
+    = javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.js'
     %meta{ property: "og:title", content: "Searchable CORD19 Database" }
     %meta{ property: "og:image", content: image_url('virus_meta.png') }
     %meta{ property: "og:description", content: "CORD-19 includes 9,000 scholarly articles about COVID-19 and coronaviruses. This application allows full-text searching of their titles, abstracts, and text."}
@@ -18,18 +20,10 @@
         %span.navbar-toggler-icon
       .collapse.navbar-collapse#bs-example-navbar-collapse-1
         %ul.navbar-nav.mr-auto
-          %li.nav-item.active
-            = link_to root_url, class: "nav-link" do
-              Home
-              %span.sr-only (current)
-        = form_tag(search_papers_path, method: :get, class: "form-inline my-2 my-lg-0") do
-          = text_field_tag(:query, nil, class: "form-control mr-sm-2", type: "search", placeholder: "Search titles and abstracts")
-          %button.btn.btn-outline-success.my-2.my-sm-0{ type: "submit" } Search
-        %span.navbar-text{ style: "width: 20px;"}
-        = form_tag(search_body_texts_path, method: :get, class: "form-inline my-2 my-lg-0") do
-          = text_field_tag(:query, nil, class: "form-control mr-sm-2", type: "search", placeholder: "Search full texts")
-          %button.btn.btn-outline-success.my-2.my-sm-0{ type: "submit" } Search
-        %span.navbar-text{ style: "width: 129px;"}
+          %li.nav-item
+            = link_to "Papers", papers_url, class: "nav-link"
+          %li.nav-item
+            = link_to "Reports", reports_url, class: "nav-link"
     = link_to "https://github.com/mspandit/covid19", style: "position: absolute; right: 0; top: 0;" do
       = image_tag("https://github.blog/wp-content/uploads/2008/12/forkme_right_red_aa0000.png", width: 149, height: 149, class: "attachment-full size-full", alt: "Fork me on GitHub", "data-recalc-dims": 1)
     

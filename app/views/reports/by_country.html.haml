@@ -1,0 +1,39 @@
+.container-fluid
+  .row
+    .col-md-1
+    .col-md-10
+      %h1
+        = pluralize(@reports_length, "Reports") 
+        for 
+        = params[:country]
+      %canvas#myChart{ width: 400, height: 200 }
+      %table.table
+        %thead
+          %tr
+            %th Update
+            %th Region
+            %th Confirmed
+            %th Deaths
+            %th Recovered
+        %tbody
+          - @reports.each do |report|
+            %tr
+              %td= report.created_at
+              %td 
+                - if report.region.province
+                  = link_to report.region.province, by_region_reports_path(report.region_id)
+                = link_to report.region.country, by_country_reports_path(report.region.country)
+              %td= report.confirmed
+              %td
+                = report.deaths
+                - if report.deaths
+                  (#{report.deaths / report.confirmed.to_f * 100}%)
+              %td
+                = report.recovered
+                - if report.recovered
+                  (#{report.recovered / report.confirmed.to_f * 100}%)
+      = paginate @reports
+:javascript
+  $(function() {
+    chart('#{by_country_reports_url(params[:country], format: :json)}')
+  });

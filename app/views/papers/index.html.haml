@@ -5,6 +5,12 @@
       %h1= pluralize(Paper.count, "Papers")
       Source: Commercial use subset of
       = link_to "COVID-19 Open Research Dataset (CORD-19)", "https://pages.semanticscholar.org/coronavirus-research"
+      = form_tag(search_papers_path, method: :get, class: "form-inline my-2 my-lg-0") do
+        = text_field_tag(:query, nil, class: "form-control mr-sm-2", type: "search", placeholder: "Search titles and abstracts")
+        %button.btn.btn-outline-success.my-2.my-sm-0{ type: "submit" } Search
+      = form_tag(search_body_texts_path, method: :get, class: "form-inline my-2 my-lg-0") do
+        = text_field_tag(:query, nil, class: "form-control mr-sm-2", type: "search", placeholder: "Search full texts")
+        %button.btn.btn-outline-success.my-2.my-sm-0{ type: "submit" } Search
 
       %table.table
         %thead
