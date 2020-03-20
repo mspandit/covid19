@@ -8,9 +8,12 @@
       %p
         Source: 
         = link_to "Johns Hopkins University Center for Systems Science and Engineering", "https://github.com/CSSEGISandData/COVID-19"
+      = form_tag('#', method: :get, class: "form-inline my-2 my-lg-0") do
+        = select_tag("country", options_for_select([['Select Country', nil]] + Region.all.map{ |r| [r.country, r.country] }.uniq.sort))
+        %button.btn.btn-outline-success.my-2.my-sm-0{ type: "submit" } Go
+      %canvas#myChart{ width: 400, height: 200 }
       %p
         Click a region or country for specific reports and chart.
-      %canvas#myChart{ width: 400, height: 200 }
       %table.table
         %thead
           %tr
@@ -28,17 +31,15 @@
                   = link_to report.region.province, by_region_reports_path(report.region_id)
                 = link_to report.region.country, by_country_reports_path(report.region.country)
               %td= report.confirmed
-              %td
-                - if report.deaths
-                  = report.deaths
-                  (#{report.deaths / report.confirmed.to_f * 100}%)
-              %td
-                - if report.recovered
-                  = report.recovered
-                  (#{report.recovered / report.confirmed.to_f * 100}%)
+              %td= report.deaths
+              %td= report.recovered
 
       = paginate @reports
 :javascript
   $(function() {
     chart('#{reports_url(params[:region_id], format: :json)}')
+    $('form').attr('action', "/reports/by_country/" + $('form select').val());
+    $('form').change(function (event) {
+      $('form').attr('action', "/reports/by_country/" + $('form select').val());
+    })
   });

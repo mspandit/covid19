@@ -6,9 +6,9 @@
 sameday = (first, second) ->
   first = new Date(first)
   second = new Date(second)
-  first.getFullYear() == second.getFullYear() && 
-  first.getMonth() == second.getMonth() &&
-  first.getDate() == second.getDate()
+  first.getUTCFullYear() == second.getUTCFullYear() && 
+  first.getUTCMonth() == second.getUTCMonth() &&
+  first.getUTCDate() == second.getUTCDate()
 
 consolidate = (data) ->
   last_result = null
@@ -29,35 +29,39 @@ consolidate = (data) ->
     url: url,
     dataType: 'json',
     success: (data, textStatus, jqXHR) ->
+      data = consolidate(data)
       ctx = $('#myChart').get(0).getContext('2d')
       myChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: $.map(consolidate(data), (datum) -> new Date(datum.created_at)),
+            labels: $.map(data, (datum) -> new Date(datum.created_at)),
             datasets: [
               {
                 label: 'Confirmed',
-                data: $.map(consolidate(data), (datum) -> datum.confirmed),
+                data: $.map(data, (datum) -> datum.confirmed),
                 borderWidth: 1,
                 cubicInterpolationMode: 'monotone',
-                backgroundColor: 'rgba(255, 0, 0, 0.1)',
-                borderColor: 'rgba(255, 0, 0, 0.1)'
+                backgroundColor: 'rgba(255, 0, 0, 1)',
+                borderColor: 'rgba(255, 0, 0, 1)',
+                fill: false
               },
               {
                 label: 'Recovered',
-                data: $.map(consolidate(data), (datum) -> datum.recovered),
+                data: $.map(data, (datum) -> datum.recovered),
                 borderWidth: 1,
                 cubicInterpolationMode: 'monotone',
-                backgroundColor: 'rgba(0, 255, 0, 0.1)',
-                borderColor: 'rgba(0, 255, 0, 0.1)'
+                backgroundColor: 'rgba(0, 255, 0, 1)',
+                borderColor: 'rgba(0, 255, 0, 1)',
+                fill: false
               },
               {
                 label: 'Deaths',
-                data: $.map(consolidate(data), (datum) -> datum.deaths),
+                data: $.map(data, (datum) -> datum.deaths),
                 borderWidth: 1,
                 cubicInterpolationMode: 'monotone',
-                backgroundColor: 'rgba(0, 0, 0, 0.1)',
-                borderColor: 'rgba(0, 0, 0, 0.1)'
+                backgroundColor: 'rgba(0, 0, 0, 1)',
+                borderColor: 'rgba(0, 0, 0, 1)',
+                fill: false
               }
             ]
         },
