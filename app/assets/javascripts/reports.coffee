@@ -44,7 +44,12 @@ consolidate = (data) ->
         datasets: [
           {
             label: 'Confirmed',
-            data: $.map(data, (datum) -> datum.confirmed),
+            data: $.map(data, (datum) -> 
+              if datum.confirmed 
+                datum.confirmed 
+              else 
+                NaN
+            ),
             borderWidth: 1,
             cubicInterpolationMode: 'monotone',
             backgroundColor: 'rgba(255, 0, 0, 1)',
@@ -53,7 +58,12 @@ consolidate = (data) ->
           },
           {
             label: 'Recovered',
-            data: $.map(data, (datum) -> datum.recovered),
+            data: $.map(data, (datum) -> 
+              if datum.recovered 
+                datum.recovered 
+              else 
+                NaN
+            ),
             borderWidth: 1,
             cubicInterpolationMode: 'monotone',
             backgroundColor: 'rgba(0, 255, 0, 1)',
@@ -62,7 +72,12 @@ consolidate = (data) ->
           },
           {
             label: 'Deaths',
-            data: $.map(data, (datum) -> datum.deaths),
+            data: $.map(data, (datum) -> 
+              if datum.deaths 
+                datum.deaths 
+              else 
+                NaN
+            ),
             borderWidth: 1,
             cubicInterpolationMode: 'monotone',
             backgroundColor: 'rgba(0, 0, 0, 1)',
