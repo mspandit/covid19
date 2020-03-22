@@ -41,12 +41,6 @@
       = paginate @reports
 :javascript
   $(function() {
-    with_data('#{by_region_reports_url(region_id: params[:region_id], format: :json)}', function (data) {
-      $('#loading').hide()
-      $('#chart').show()
-      chart = chart(data, $('#stacked-switch').get(0).checked)
-      $('#stacked-switch').change(function (event) {
-        redraw(chart, this.checked)
-      })
-    })
+    chart = new ReportChart('#loading', '#chart', '#stacked-switch');
+    chart.updateData('#{by_region_reports_url(region_id: params[:region_id], format: :json)}')
   });

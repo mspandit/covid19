@@ -24,7 +24,7 @@ def safe_col(row, header, field)
 end
 
 ROOT_DIRS.each do |root_dir|
-  Dir[root_dir + "/03-19-2020.csv"].each do |filename|
+  Dir[root_dir + "/03-21-2020.csv"].each do |filename|
     open(filename) do |f|
       CSV.parse(f.read, headers: true) do |row|
         region_id = JSON.parse(

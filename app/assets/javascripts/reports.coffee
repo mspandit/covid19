@@ -24,67 +24,48 @@ consolidate = (data) ->
     )
   results
 
-@with_data = (url, handler) ->
+with_data = (url, handler) ->
   $.ajax({
     url: url,
     dataType: 'json',
     success: (data, textStatus, jqXHR) ->
       handler(data)
   })
+
+redraw = (chart, stacked) ->
+    chart.data.datasets.forEach((dataset) ->
+      dataset.fill = stacked
+    )
+    chart.options = {
+      scales: {
+        xAxes: [{
+          type: 'time',
+          distribution: 'linear',
+        }],
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          },
+          stacked: stacked
+        }]
+      }
+    }
+    chart.update()
   
-@chart = (data, stacked) ->
-  data = consolidate(data)
-  canvas = $('canvas').get(0)
-  ctx = canvas.getContext('2d')
+chart = (canvas, stacked) ->
+  ctx = canvas.get(0).getContext('2d')
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   return new Chart(ctx, {
     type: 'line',
     data: {
-        labels: $.map(data, (datum) -> new Date(datum.created_at)),
-        datasets: [
-          {
-            label: 'Confirmed',
-            data: $.map(data, (datum) -> datum.confirmed),
-            borderWidth: 1,
-            cubicInterpolationMode: 'monotone',
-            backgroundColor: 'rgba(255, 0, 0, 1)',
-            borderColor: 'rgba(255, 0, 0, 1)',
-            fill: stacked
-          },
-          {
-            label: 'Recovered',
-            data: $.map(data, (datum) -> datum.recovered),
-            borderWidth: 1,
-            cubicInterpolationMode: 'monotone',
-            backgroundColor: 'rgba(0, 255, 0, 1)',
-            borderColor: 'rgba(0, 255, 0, 1)',
-            fill: stacked
-          },
-          {
-            label: 'Deaths',
-            data: $.map(data, (datum) -> datum.deaths),
-            borderWidth: 1,
-            cubicInterpolationMode: 'monotone',
-            backgroundColor: 'rgba(0, 0, 0, 1)',
-            borderColor: 'rgba(0, 0, 0, 1)',
-            fill: stacked
-          }
-        ]
+        labels: []
+        datasets: []
     },
     options: {
       scales: {
         xAxes: [{
           type: 'time',
           distribution: 'linear',
-          # time: {
-          #   parser: 'MM/DD/YYYY HH:mm',
-          #   # round: 'day'
-          #   tooltipFormat: 'll HH:mm'
-          # },
-          # scaleLabel: {
-          #   display: true,
-          #   labelString: 'Date'
-          # }
         }],
         yAxes: [{
           ticks: {
@@ -96,31 +77,130 @@ consolidate = (data) ->
     }
   })
 
-@redraw = (chart, stacked) ->
-  chart.data.datasets.forEach((dataset) ->
-    dataset.fill = stacked
-  )
-  chart.options = {
-    scales: {
-      xAxes: [{
-        type: 'time',
-        distribution: 'linear',
-        # time: {
-        #   parser: 'MM/DD/YYYY HH:mm',
-        #   # round: 'day'
-        #   tooltipFormat: 'll HH:mm'
-        # },
-        # scaleLabel: {
-        #   display: true,
-        #   labelString: 'Date'
-        # }
-      }],
-      yAxes: [{
-        ticks: {
-          beginAtZero: true
-        },
-        stacked: stacked
-      }]
-    }
+datasetConfig = (label, data, color, fill, pointStyle) ->
+  {
+    label: label,
+    data: data,
+    borderWidth: 1,
+    cubicInterpolationMode: 'monotone',
+    backgroundColor: color,
+    borderColor: color,
+    fill: fill,
+    pointStyle: pointStyle
   }
-  chart.update()
+
+merge = (data1, data2) ->
+  merged = []
+  data1.forEach((datum) ->
+    merged.push(
+      {
+        created_at: datum.created_at,
+        confirmed1: datum.confirmed,
+        recovered1: datum.recovered,
+        deaths1: datum.deaths,
+        confirmed2: NaN,
+        recovered2: NaN,
+        deaths2: NaN
+      }
+    )
+  )
+  data2.forEach((datum)->
+    merged.push(
+      {
+        created_at: datum.created_at,
+        confirmed2: datum.confirmed,
+        recovered2: datum.recovered,
+        deaths2: datum.deaths,
+        confirmed1: NaN,
+        recovered1: NaN,
+        deaths1: NaN
+      }
+    )
+  )
+  merged.sort((d1, d2) -> 
+    if d1.created_at < d2.created_at
+      -1
+    else if d1.created_at > d2.created_at
+      1
+    else
+      0
+  )
+  console.log(merged)
+  merged
+
+@ReportChart2 = (loading_id, chart_id, stacked_id, pointStyle1, pointStyle2) ->
+  self = this
+
+  if stacked_id
+    $(stacked_id).change((event) ->
+      self.redraw(this.checked)
+    )
+    self.chart = chart($(chart_id + ' canvas'), $(stacked_id).get(0).checked)
+  else
+    self.chart = chart($(chart_id + ' canvas'), false)
+
+  self.redraw = (stacked) ->
+    redraw(self.chart, stacked)
+  
+  self.updateData = (label1, url1, label2, url2) ->
+    fill = if stacked_id
+      $(stacked_id).get(0).checked
+    else
+      false
+    $(chart_id).hide()
+    $(loading_id).show()
+    with_data(url1, (data1) ->
+      with_data(url2, (data2) ->
+        data1 = consolidate(data1)
+        data2 = consolidate(data2)
+        data = merge(data1, data2)
+        $(loading_id).hide()
+        $(chart_id).show()
+        self.chart.data.labels = $.map(data, (datum) -> new Date(datum.created_at))
+        self.chart.data.datasets = [
+          datasetConfig(label1 + ' Confirmed', $.map(data, (datum) -> datum.confirmed1), 'rgba(255, 0, 0, 1)', fill, pointStyle1),
+          datasetConfig(label1 + ' Recovered', $.map(data, (datum) -> datum.recovered1), 'rgba(0, 255, 0, 1)', fill, pointStyle1),
+          datasetConfig(label1 + ' Deaths',    $.map(data, (datum) -> datum.deaths1),    'rgba(0, 0, 0, 1)',   fill, pointStyle1),
+          datasetConfig(label2 + ' Confirmed', $.map(data, (datum) -> datum.confirmed2), 'rgba(255, 0, 0, 1)', fill, pointStyle2),
+          datasetConfig(label2 + ' Recovered', $.map(data, (datum) -> datum.recovered2), 'rgba(0, 255, 0, 1)', fill, pointStyle2),
+          datasetConfig(label2 + ' Deaths',    $.map(data, (datum) -> datum.deaths2),    'rgba(0, 0, 0, 1)',   fill, pointStyle2)
+        ]
+        self.chart.update()
+      )
+    )
+  return self
+
+@ReportChart = (loading_id, chart_id, stacked_id, pointStyle='circle') ->
+  self = this
+
+  if stacked_id
+    $(stacked_id).change((event) ->
+      self.redraw(this.checked)
+    )
+    self.chart = chart($(chart_id + ' canvas'), $(stacked_id).get(0).checked)
+  else
+    self.chart = chart($(chart_id + ' canvas'), false)
+
+  self.redraw = (stacked) ->
+    redraw(self.chart, stacked)
+  
+  self.updateData = (url) ->
+    fill = if stacked_id
+      $(stacked_id).get(0).checked
+    else
+      false
+    $(chart_id).hide()
+    $(loading_id).show()
+    with_data(url, (data) ->
+      data = consolidate(data)
+      $(loading_id).hide()
+      $(chart_id).show()
+      self.chart.data.labels = $.map(data, (datum) -> new Date(datum.created_at))
+      self.chart.data.datasets = [
+        datasetConfig('Confirmed', $.map(data, (datum) -> datum.confirmed), 'rgba(255, 0, 0, 1)', fill, pointStyle),
+        datasetConfig('Recovered', $.map(data, (datum) -> datum.recovered), 'rgba(0, 255, 0, 1)', fill, pointStyle),
+        datasetConfig('Deaths',    $.map(data, (datum) -> datum.deaths),    'rgba(0, 0, 0, 1)',   fill, pointStyle)
+      ]
+      self.chart.update()
+    )
+  return self

@@ -14,9 +14,9 @@
       %p
         See also
         = link_to "Coronavirus Dashboard", "https://ncov2019.live/data"
-      = form_tag('#', method: :get, class: "form-inline my-2 my-lg-0") do
+      = form_tag('#', method: :get, class: "form-inline") do
         = select_tag("country", options_for_select([['Select Country', nil]] + Region.all.map{ |r| [r.country, r.country] }.uniq.sort))
-        %button.btn.btn-outline-success.my-2.my-sm-0{ type: "submit" } Go
+        %button.btn.btn-primary{ type: "submit" } Go
       #chart{ style: "display: none;" }
         %canvas{ width: 400, height: 200 }
         .custom-control.custom-switch
@@ -49,16 +49,10 @@
       = paginate @reports
 :javascript
   $(function() {
-    $('form').attr('action', "/reports/by_country/" + $('form select').val());
+    chart = new ReportChart('#loading', '#chart', '#stacked-switch')
+    chart.updateData('#{reports_url(format: :json)}')
+    $('form').attr('action', "/reports/by_country/" + $('form select').val() + ".html");
     $('form').change(function (event) {
-      $('form').attr('action', "/reports/by_country/" + $('form select').val());
-    })
-    with_data('#{reports_url(format: :json)}', function (data) {
-      $('#loading').hide()
-      $('#chart').show()
-      chart = chart(data, $('#stacked-switch').get(0).checked)
-      $('#stacked-switch').change(function (event) {
-        redraw(chart, this.checked)
-      })
+      $('form').attr('action', "/reports/by_country/" + $('form select').val() + ".html");
     })
   });

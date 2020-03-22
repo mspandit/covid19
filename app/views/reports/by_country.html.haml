@@ -13,6 +13,7 @@
           %label.custom-control-label{ for: "stacked-switch" } Stacked Chart
       #loading
         Loading...
+      = link_to("Compare with another country...", country_comparison_reports_path(country1: params[:country]))
       %table.table
         %thead
           %tr
@@ -41,12 +42,6 @@
       = paginate @reports
 :javascript
   $(function() {
-    with_data('#{by_country_reports_url(country: params[:country], format: :json)}', function (data) {
-      $('#loading').hide()
-      $('#chart').show()
-      chart = chart(data, $('#stacked-switch').get(0).checked)
-      $('#stacked-switch').change(function (event) {
-        redraw(chart, this.checked)
-      })
-    })
+    chart = new ReportChart('#loading', '#chart', '#stacked-switch')
+    chart.updateData('#{by_country_reports_url(country: params[:country], format: :json)}')
   });
