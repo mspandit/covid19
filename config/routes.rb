@@ -3,6 +3,7 @@ Rails.application.routes.draw do
     collection do
       get 'by_country/:country' => 'reports#by_country', as: "by_country"
       get 'by_region/:region_id' => 'reports#by_region', as: "by_region"
+      get 'compare' => 'reports#compare', as: "country_comparison"
       post SECRET => 'reports#secret_create'
     end
   end

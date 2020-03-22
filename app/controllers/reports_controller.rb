@@ -47,6 +47,10 @@ class ReportsController < ApplicationController
     
   end
   
+  def compare
+    
+  end
+  
   # GET /reports/by_region/1
   def by_region
     all = Report.where(region_id: params[:region_id]).order(created_at: :asc).page params[:page]

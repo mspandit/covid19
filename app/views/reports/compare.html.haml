@@ -1,0 +1,71 @@
+.container-fluid
+  .row
+    .col-md-1
+    .col-md-10
+      %h1 Country Comparison
+      %table.table
+        %tbody
+          %tr
+            %td{ width: "50%" }
+              #chart1{ style: "display: none;" }
+                %canvas{ width: 400, height: 200 }
+              #loading1{ style: "display: none;" }
+                Loading...
+            %td{ width: "50%" }
+              #chart2{ style: "display: none;" }
+                %canvas{ width: 400, height: 200 }
+              #loading2{ style: "display: none;" }
+                Loading...
+          %tr
+            %td
+              = form_tag('#', method: :get, class: "form-inline my-2 my-lg-0") do
+                = select_tag("country1", options_for_select([['Select Country', '']] + Region.all.map{ |r| [r.country, r.country] }.uniq.sort, params[:country1]), value: params[:country1])
+            %td
+              = form_tag('#', method: :get, class: "form-inline my-2 my-lg-0") do
+                = select_tag("country2", options_for_select([['Select Country', '']] + Region.all.map{ |r| [r.country, r.country] }.uniq.sort, params[:country2]), value: params[:country2])
+          %tr
+            %td{ colspan: 2 }
+              .custom-control.custom-switch
+                %input.custom-control-input#stacked-switch{ type: "checkbox" }
+                %label.custom-control-label{ for: "stacked-switch" } Stacked Chart
+          %tr
+            %td{ colspan: 2 }
+              #chart3{ style: "display: none;" }
+                %canvas{ width: 400, height: 200 }
+              #loading3{ style: "display: none;" }
+                Loading...
+:javascript
+  var country1 = '#{params[:country1]}';
+  var country2 = '#{params[:country2]}';
+  var chart1, chart2;
+  $(function() {
+    $('#country1').val(country1);
+    $('#country2').val(country2);
+    chart1 = new ReportChart('#loading1', '#chart1', '#stacked-switch', 'rect')
+    if (country1 && country1 != '') {
+      chart1.updateData('/reports/by_country/' + country1 + '.json')
+    }
+    chart2 = new ReportChart('#loading2', '#chart2', '#stacked-switch', 'triangle')
+    if (country2 && country2 != '') {
+      chart2.updateData('/reports/by_country/' + country2 + '.json')
+    }
+    chart3 = new ReportChart2('#loading3', '#chart3', null, 'rect', 'triangle')
+    $('#country1').change(function (event) {
+      country1 = $('#country1').val();
+      if (country1 && country1 != '') {
+        chart1.updateData('/reports/by_country/' + country1 + '.json')
+        if (country2 && country2 != '') {
+          chart3.updateData(country1, '/reports/by_country/' + country1 + '.json', country2, '/reports/by_country/' + country2 + '.json')
+        }
+      }
+    })
+    $('#country2').change(function (event) {
+      country2 = $('#country2').val();
+      if (country2 && country2 != '') {
+        chart2.updateData('/reports/by_country/' + country2 + '.json')
+        if (country1 && country1 != '') {
+          chart3.updateData(country1, '/reports/by_country/' + country1 + '.json', country2, '/reports/by_country/' + country2 + '.json')
+        }
+      }
+    })
+  });
