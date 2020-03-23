@@ -1,0 +1,26 @@
+.container-fluid
+  .row
+    .col-md-1
+    .col-md-10
+
+      %h1= @question.content
+      
+      %p
+        Asked
+        = pluralize(@question.count, "time")
+      
+      %table.table
+        %thead
+          %th Answer
+          %th Probability
+          %th{ colspan: 2 } Source
+        %tbody
+          - @question.answers.each do |answer|
+            %tr
+              %td= answer['answer']
+              %td #{(answer['probability'] * 100).round}%
+              %td
+                = answer['meta']['source']
+              %td
+                = link_to answer['meta']['document_name'], answer['meta']['link']
+      = link_to 'Back', questions_path

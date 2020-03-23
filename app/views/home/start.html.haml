@@ -1,0 +1,21 @@
+.container-fluid
+  .row
+    .col-md-1
+    .col-md-10
+      %table.table
+        %thead
+          %th
+            %h1{ style: "text-align: center;" }= link_to "Papers", papers_path 
+          %th
+            %h1{ style: "text-align: center;" }= link_to "Reports", reports_path
+          %th
+            %h1{ style: "text-align: center;" }= link_to "Q & A", questions_path
+        %tbody
+          %td 
+            Search titles, abstracts, and full text of 9,000 scholarly articles from the 
+            = link_to "COVID-19 Open Research Dataset (CORD-19)", "https://pages.semanticscholar.org/coronavirus-research"
+          %td
+            View daily reports and charts of disease progression globally, by country, or by region.
+          %td
+            Get answers to your questions directly from trustworthy data sources. Courtesy
+            = link_to "deepset GmbH", "https://deepset.ai"

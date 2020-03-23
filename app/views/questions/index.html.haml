@@ -1,0 +1,30 @@
+.container-fluid
+  .row
+    .col-md-1
+    .col-md-10
+
+      %h1 Q & A
+
+      - if @questions.count > 0
+        %h2 Frequently-Asked Questions
+        %table.table
+          %thead
+            %tr
+              %th Question
+              %th Times Asked
+              %th
+          %tbody
+            - @questions.each do |question|
+              %tr
+                %td= question.content
+                %td= question.count
+                %td
+                  = link_to ask_question_path(question), method: :post do
+                    .btn.btn-primary Ask
+      
+      %h1 Ask a New Question
+      = form_with(model: @question, local: true, class: "form-inline") do |form|
+        = form.text_field(:content, class: "form-control", style: "width: 90%;", placeholder: "Type a new question")
+        = form.hidden_field(:count)
+        %button.btn.btn-outline-success.my-2.my-sm-0{ type: "submit" } Ask
+          

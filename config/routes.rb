@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+  resources :questions do
+    member do
+      post 'ask' => "questions#ask"
+    end
+  end
+  get 'home/start'
   resources :reports do
     collection do
       get 'by_country/:country' => 'reports#by_country', as: "by_country"
@@ -30,6 +36,6 @@ Rails.application.routes.draw do
       post SECRET => "papers#secret_create"
     end
   end
-  root 'papers#index'
+  root 'home#start'
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
