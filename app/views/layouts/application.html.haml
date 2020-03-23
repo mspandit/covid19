@@ -1,7 +1,8 @@
 !!!
 %html
   %head
-    %title Searchable CORD19 Database
+    - @title = "COVID-19 Data and Research"
+    %title= @title
     = csrf_meta_tags
     = csp_meta_tag
     = stylesheet_link_tag    'application', media: 'all'
@@ -9,13 +10,13 @@
     = javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js'
     = javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.js'
     = javascript_include_tag 'https://www.googletagmanager.com/gtag/js?id=UA-161520416-1'
-    %meta{ property: "og:title", content: "Searchable CORD19 Database" }
+    %meta{ property: "og:title", content: @title }
     %meta{ property: "og:image", content: image_url('virus_meta.png') }
-    %meta{ property: "og:description", content: "CORD-19 includes 9,000 scholarly articles about COVID-19 and coronaviruses. This application allows full-text searching of their titles, abstracts, and text."}
+    %meta{ property: "og:description", content: "Charts of daily COVID-19 reports by country and region. Full-text searching of the titles, abstracts, and text of 9,000 scholarly articles about COVID-19 and coronaviruses."}
     %meta{ property: "og:url", content: root_url }
   %body
     %nav.navbar.navbar-expand-lg.navbar-light.bg-light
-      = link_to root_url, { class: "navbar-brand", title: "Searchable CORD19 Database" }, class: "btn btn-primary" do
+      = link_to root_url, { class: "navbar-brand", title: "COVID-19 Data and Research" }, class: "btn btn-primary" do
         = image_tag 'virus.png', style: "height: 45px;"
       %button.navbar-toggler{ type: "button", :"data-toggle" => "collapse", :"data-target" => "#bs-example-navbar-collapse-1", style: "margin-right: 149px;" }
         %span.navbar-toggler-icon
@@ -27,20 +28,20 @@
             = link_to "Reports", reports_url, class: "nav-link"
     = link_to "https://github.com/mspandit/covid19", style: "position: absolute; right: 0; top: 0;" do
       = image_tag("https://github.blog/wp-content/uploads/2008/12/forkme_right_red_aa0000.png", width: 149, height: 149, class: "attachment-full size-full", alt: "Fork me on GitHub", "data-recalc-dims": 1)
-    
-  .container-fluid
-    .row
-      .col-md-1
-      .col-md-10
-        - if notice
-          .alert.alert-info= notice
-        - if alert
-          .alert.alert-danger= alert
-    = yield
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  :javascript
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
 
-      gtag('config', 'UA-161520416-1');
+    .container-fluid
+      .row
+        .col-md-1
+        .col-md-10
+          - if notice
+            .alert.alert-info= notice
+          - if alert
+            .alert.alert-danger= alert
+      = yield
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    :javascript
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-161520416-1');
