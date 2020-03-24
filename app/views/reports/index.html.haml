@@ -2,6 +2,10 @@
   .row
     .col-md-1
     .col-md-10
+      .alert.alert-danger 
+        Due to the difficulty of obtaining reliable data, Johns Hopkins University is 
+        = link_to "no longer publishing", "https://github.com/CSSEGISandData/COVID-19/issues/1250" 
+        reports of recovered cases.
       %h1
         = pluralize(@reports_length, "Reports")
         for All Countries
@@ -33,7 +37,6 @@
             %th Region
             %th Confirmed
             %th Deaths
-            %th Recovered
         %tbody
           - @reports.each do |report|
             %tr
@@ -44,7 +47,6 @@
                 = link_to report.region.country, by_country_reports_path(report.region.country)
               %td= report.confirmed
               %td= report.deaths
-              %td= report.recovered
 
       = paginate @reports
 :javascript

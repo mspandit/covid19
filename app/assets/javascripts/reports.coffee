@@ -16,7 +16,6 @@ consolidate = (data) ->
   data.forEach((datum) -> 
     if last_result && sameday(datum.created_at, last_result.created_at)
       last_result.confirmed += datum.confirmed
-      last_result.recovered += datum.recovered
       last_result.deaths += datum.deaths
     else
       results.push(datum)
@@ -96,10 +95,8 @@ merge = (data1, data2) ->
       {
         created_at: datum.created_at,
         confirmed1: datum.confirmed,
-        recovered1: datum.recovered,
         deaths1: datum.deaths,
         confirmed2: NaN,
-        recovered2: NaN,
         deaths2: NaN
       }
     )
@@ -109,10 +106,8 @@ merge = (data1, data2) ->
       {
         created_at: datum.created_at,
         confirmed2: datum.confirmed,
-        recovered2: datum.recovered,
         deaths2: datum.deaths,
         confirmed1: NaN,
-        recovered1: NaN,
         deaths1: NaN
       }
     )
@@ -159,10 +154,8 @@ merge = (data1, data2) ->
         self.chart.data.labels = $.map(data, (datum) -> new Date(datum.created_at))
         self.chart.data.datasets = [
           datasetConfig(label1 + ' Confirmed', $.map(data, (datum) -> datum.confirmed1 || NaN), 'rgba(255, 0, 0, 1)', fill, pointStyle1),
-          datasetConfig(label1 + ' Recovered', $.map(data, (datum) -> datum.recovered1 || NaN), 'rgba(0, 255, 0, 1)', fill, pointStyle1),
           datasetConfig(label1 + ' Deaths',    $.map(data, (datum) -> datum.deaths1 || NaN),    'rgba(0, 0, 0, 1)',   fill, pointStyle1),
           datasetConfig(label2 + ' Confirmed', $.map(data, (datum) -> datum.confirmed2 || NaN), 'rgba(255, 0, 0, 1)', fill, pointStyle2),
-          datasetConfig(label2 + ' Recovered', $.map(data, (datum) -> datum.recovered2 || NaN), 'rgba(0, 255, 0, 1)', fill, pointStyle2),
           datasetConfig(label2 + ' Deaths',    $.map(data, (datum) -> datum.deaths2 || NaN),    'rgba(0, 0, 0, 1)',   fill, pointStyle2)
         ]
         self.chart.update()
@@ -198,7 +191,6 @@ merge = (data1, data2) ->
       self.chart.data.labels = $.map(data, (datum) -> new Date(datum.created_at))
       self.chart.data.datasets = [
         datasetConfig('Confirmed', $.map(data, (datum) -> datum.confirmed || NaN), 'rgba(255, 0, 0, 1)', fill, pointStyle),
-        datasetConfig('Recovered', $.map(data, (datum) -> datum.recovered || NaN), 'rgba(0, 255, 0, 1)', fill, pointStyle),
         datasetConfig('Deaths',    $.map(data, (datum) -> datum.deaths || NaN),    'rgba(0, 0, 0, 1)',   fill, pointStyle)
       ]
       self.chart.update()

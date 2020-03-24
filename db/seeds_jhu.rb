@@ -8,8 +8,9 @@
 require 'csv'
 require 'json'
 require 'faraday'
+require 'tqdm'
 
-ROOT_DIRS = ['../COVID-19/csse_covid_19_data/csse_covid_19_daily_reports/']
+ROOT_DIR = '../COVID-19/csse_covid_19_data/csse_covid_19_time_series/'
 ROOT_URL = "development" == ENV['RAILS_ENV'] ? "http://localhost:3000/" : "http://www.know-covid19.info/"
 
 if ENV["SECRET"].nil? || ENV["SECRET"].empty?
@@ -19,44 +20,30 @@ else
   SECRET = ENV["SECRET"]
 end
 
-def safe_col(row, header, field)
-  row.headers.include?(header) ? row.fetch(header) : row.field(field)
-end
-
-ROOT_DIRS.each do |root_dir|
-  Dir[root_dir + "/03-22-2020.csv"].each do |filename|
-    open(filename) do |f|
-      CSV.parse(f.read, headers: true) do |row|
-        region_id = JSON.parse(
-          Faraday.post(
-            "#{ROOT_URL}regions/#{SECRET}.json",
-            "region[province]": safe_col(row, "Province/State", 0),
-            "region[country]": safe_col(row, "Country/Region", 1),
-            "region[latitude]": safe_col(row, "Latitude", 6),
-            "region[longitude]": safe_col(row, "Longitude", 7)
-          ).body
-        )['id']
-        created_at = begin
-          DateTime.parse(safe_col(row, "Last Update", 2))
-        rescue ArgumentError => e
-          dt = DateTime.strptime(safe_col(row, "Last Update", 2), "%m/%d/%Y %H:%M") 
-          if dt.year < 2020
-            dt = DateTime.strptime(safe_col(row, "Last Update", 2), "%m/%d/%y %H:%M")
-          end
-          dt
-        end
-        
-        Faraday.post(
-          "#{ROOT_URL}reports/#{SECRET}.json",
-          "report[region_id]": region_id,
-          "report[created_at]": created_at,
-          "report[confirmed]": safe_col(row, "Confirmed", 3),
-          "report[deaths]": safe_col(row, "Deaths", 4),
-          "report[recovered]": safe_col(row, "Recovered", 5)
-        )
-        print "."
-        $stdout.flush
-      end
+def process(time_series_file, db_field)
+  CSV.parse(open(Dir[ROOT_DIR + time_series_file].first).read, headers: true).tqdm.each do |row|
+    region_id = JSON.parse(
+      Faraday.post(
+        "#{ROOT_URL}regions/#{SECRET}.json",
+        "region[province]": row['Province/State'],
+        "region[country]": row['Country/Region'],
+        "region[latitude]": row['Lat'],
+        "region[longitude]": row['Long']
+      ).body
+    )['id']
+    (row.fields.length - 1..row.fields.length - 1).each do |column_index|
+      # puts column_index
+      # puts row.headers[column_index]
+      created_at = DateTime.strptime(row.headers[column_index], "%m/%d/%y")
+      Faraday.post(
+        "#{ROOT_URL}reports/#{SECRET}.json",
+        "report[region_id]": region_id,
+        "report[created_at]": created_at,
+        "report[#{db_field}]": row.field(column_index)
+      )
     end
   end
 end
+
+process('time_series_covid19_deaths_global.csv', 'deaths')
+process('time_series_covid19_confirmed_global.csv', 'confirmed')

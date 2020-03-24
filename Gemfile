@@ -81,3 +81,5 @@ gem 'pundit'
 gem 'kaminari'
 
 gem 'faraday'
+
+gem 'tqdm'
