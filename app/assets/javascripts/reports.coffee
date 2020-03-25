@@ -29,6 +29,8 @@ with_data = (url, handler) ->
     dataType: 'json',
     success: (data, textStatus, jqXHR) ->
       handler(data)
+    error: (jqXHR, textStatus, errorThrown) ->
+      console.log(jqXHR, textStatus, errorThrown)
   })
 
 redraw = (chart, stacked, confirmed, deaths, datasetConfigs) ->

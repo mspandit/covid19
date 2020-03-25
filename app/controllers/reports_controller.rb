@@ -6,15 +6,13 @@ class ReportsController < ApplicationController
   # GET /reports
   # GET /reports.json
   def index
-    all = Report.order(created_at: :asc)
+    all = Report.includes(:region).order(created_at: :asc)
     respond_to do |format|
       format.html do
         @reports_length = all.length
         @reports = all.page params[:page]
       end
-      format.json do
-        @reports = all
-      end
+      format.json { render json: all.to_json, status: :ok }
     end
   end
 
@@ -40,9 +38,7 @@ class ReportsController < ApplicationController
         @reports_length = all.length
         @reports = all.page params[:page]
       end
-      format.json do
-        @reports = all
-      end
+      format.json { render json: all.to_json, status: :ok }
     end
     
   end
@@ -59,9 +55,7 @@ class ReportsController < ApplicationController
         @reports_length = all.length
         @reports = all.page params[:page]
       end
-      format.json do
-        @reports = all
-      end
+      format.json { render json: all.to_json, status: :ok }
     end
   end
 
