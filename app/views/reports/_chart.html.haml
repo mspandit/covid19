@@ -1,0 +1,13 @@
+#chart
+  .custom-control.custom-switch
+    %input.custom-control-input#stacked-switch{ type: "checkbox" }
+    %label.custom-control-label{ for: "stacked-switch" } Stacked Chart
+  .custom-control.custom-switch
+    %input.custom-control-input#confirmed{ type: "checkbox", checked: true }
+    %label.custom-control-label{ for: "confirmed" } Show Confirmed
+  .custom-control.custom-switch
+    %input.custom-control-input#deaths{ type: "checkbox", checked: true }
+    %label.custom-control-label{ for: "deaths" } Show Deaths
+  %canvas{ width: 400, height: 200, style: "display: none;" }
+  .loading
+    Loading...

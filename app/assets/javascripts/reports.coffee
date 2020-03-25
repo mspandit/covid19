@@ -31,50 +31,36 @@ with_data = (url, handler) ->
       handler(data)
   })
 
-redraw = (chart, stacked) ->
-    chart.data.datasets.forEach((dataset) ->
-      dataset.fill = stacked
+redraw = (chart, stacked, confirmed, deaths, datasetConfigs) ->
+  chart.data.datasets = []
+  if confirmed
+    datasetConfigs.forEach((dsc) ->
+      if dsc.label.includes('Confirmed')
+        chart.data.datasets.push(dsc)
     )
-    chart.options = {
-      scales: {
-        xAxes: [{
-          type: 'time',
-          distribution: 'linear',
-        }],
-        yAxes: [{
-          ticks: {
-            beginAtZero: true
-          },
-          stacked: stacked
-        }]
-      }
+  if deaths
+    datasetConfigs.forEach((dsc) ->
+      if dsc.label.includes('Deaths')
+        chart.data.datasets.push(dsc)
+    )
+  chart.data.datasets.forEach((dataset) ->
+    dataset.fill = stacked
+  )
+  chart.options = {
+    scales: {
+      xAxes: [{
+        type: 'time',
+        distribution: 'linear',
+      }],
+      yAxes: [{
+        ticks: {
+          beginAtZero: true
+        },
+        stacked: stacked
+      }]
     }
-    chart.update()
-  
-chart = (canvas, stacked) ->
-  ctx = canvas.get(0).getContext('2d')
-  ctx.clearRect(0, 0, canvas.width, canvas.height)
-  return new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: []
-        datasets: []
-    },
-    options: {
-      scales: {
-        xAxes: [{
-          type: 'time',
-          distribution: 'linear',
-        }],
-        yAxes: [{
-          ticks: {
-            beginAtZero: true
-          },
-          stacked: stacked
-        }]
-      }
-    }
-  })
+  }
+  chart.update()
 
 datasetConfig = (label, data, color, fill, pointStyle) ->
   {
@@ -120,79 +106,159 @@ merge = (data1, data2) ->
     else
       0
   )
-  console.log(merged)
   merged
 
-@ReportChart2 = (loading_id, chart_id, stacked_id, pointStyle1, pointStyle2) ->
+@ReportChart2 = (chart_id, pointStyle1, pointStyle2) ->
   self = this
-
-  if stacked_id
-    $(stacked_id).change((event) ->
-      self.redraw(this.checked)
-    )
-    self.chart = chart($(chart_id + ' canvas'), $(stacked_id).get(0).checked)
-  else
-    self.chart = chart($(chart_id + ' canvas'), false)
-
-  self.redraw = (stacked) ->
-    redraw(self.chart, stacked)
   
-  self.updateData = (label1, url1, label2, url2) ->
-    fill = if stacked_id
-      $(stacked_id).get(0).checked
+  self.loading_element = $(chart_id + ' .loading')
+
+  self.canvas_element = $(chart_id + ' canvas')
+  self.stacked_element = $('#stacked-switch')
+  self.stacked = () ->
+    if self.stacked_element.length != 0
+      self.stacked_element.get(0).checked
     else
       false
-    $(chart_id).hide()
-    $(loading_id).show()
+  self.confirmed_element = $('#confirmed')
+  self.confirmed = () ->
+    if self.confirmed_element.length != 0
+      self.confirmed_element.get(0).checked
+    else
+      true
+  self.deaths_element = $('#deaths')
+  self.deaths = () ->
+    if self.deaths_element.length != 0
+      self.deaths_element.get(0).checked
+    else
+      true
+  
+  self.stacked_element.change((event) ->
+    self.redraw()
+  )
+  self.confirmed_element.change((event) ->
+    self.redraw()
+  )
+  self.deaths_element.change((event) ->
+    self.redraw()
+  )
+
+  self.chart = new Chart(self.canvas_element.get(0).getContext('2d'), {
+    type: 'line',
+    data: {
+        labels: []
+        datasets: []
+    },
+    options: {
+      scales: {
+        xAxes: [{
+          type: 'time',
+          distribution: 'linear',
+        }],
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      }
+    }
+  })
+
+  self.redraw = () ->
+    redraw(self.chart, self.stacked(), self.confirmed(), self.deaths(), self.datasetConfigs)
+  
+  self.updateData = (label1, url1, label2, url2) ->
+    self.canvas_element.hide()
+    self.loading_element.show()
     with_data(url1, (data1) ->
       with_data(url2, (data2) ->
         data1 = consolidate(data1)
         data2 = consolidate(data2)
         data = merge(data1, data2)
-        $(loading_id).hide()
-        $(chart_id).show()
+        self.canvas_element.show()
+        self.loading_element.hide()
         self.chart.data.labels = $.map(data, (datum) -> new Date(datum.created_at))
-        self.chart.data.datasets = [
-          datasetConfig(label1 + ' Confirmed', $.map(data, (datum) -> datum.confirmed1 || NaN), 'rgba(255, 0, 0, 1)', fill, pointStyle1),
-          datasetConfig(label1 + ' Deaths',    $.map(data, (datum) -> datum.deaths1 || NaN),    'rgba(0, 0, 0, 1)',   fill, pointStyle1),
-          datasetConfig(label2 + ' Confirmed', $.map(data, (datum) -> datum.confirmed2 || NaN), 'rgba(255, 0, 0, 1)', fill, pointStyle2),
-          datasetConfig(label2 + ' Deaths',    $.map(data, (datum) -> datum.deaths2 || NaN),    'rgba(0, 0, 0, 1)',   fill, pointStyle2)
+        self.datasetConfigs = [
+          datasetConfig(label1 + ' Confirmed', $.map(data, (datum) -> datum.confirmed1 || NaN), 'rgba(255, 0, 0, 1)', self.stacked(), pointStyle1),
+          datasetConfig(label1 + ' Deaths',    $.map(data, (datum) -> datum.deaths1 || NaN),    'rgba(0, 0, 0, 1)',   self.stacked(), pointStyle1),
+          datasetConfig(label2 + ' Confirmed', $.map(data, (datum) -> datum.confirmed2 || NaN), 'rgba(255, 0, 0, 1)', self.stacked(), pointStyle2),
+          datasetConfig(label2 + ' Deaths',    $.map(data, (datum) -> datum.deaths2 || NaN),    'rgba(0, 0, 0, 1)',   self.stacked(), pointStyle2)
         ]
-        self.chart.update()
+        self.redraw()
       )
     )
   return self
 
-@ReportChart = (loading_id, chart_id, stacked_id, pointStyle='circle') ->
+@ReportChart = (chart_id, pointStyle='circle') ->
   self = this
 
-  if stacked_id
-    $(stacked_id).change((event) ->
-      self.redraw(this.checked)
-    )
-    self.chart = chart($(chart_id + ' canvas'), $(stacked_id).get(0).checked)
-  else
-    self.chart = chart($(chart_id + ' canvas'), false)
-
-  self.redraw = (stacked) ->
-    redraw(self.chart, stacked)
-  
-  self.updateData = (url) ->
-    fill = if stacked_id
-      $(stacked_id).get(0).checked
+  self.loading_element = $(chart_id + ' .loading')
+  self.canvas_element = $(chart_id + ' canvas')
+  self.stacked_element = $('#stacked-switch')
+  self.stacked = () ->
+    if self.stacked_element.length != 0
+      self.stacked_element.get(0).checked
     else
       false
-    $(chart_id).hide()
-    $(loading_id).show()
+  self.confirmed_element = $('#confirmed')
+  self.confirmed = () ->
+    if self.confirmed_element.length != 0
+      self.confirmed_element.get(0).checked
+    else
+      true
+  self.deaths_element = $('#deaths')
+  self.deaths = () ->
+    if self.deaths_element.length != 0
+      self.deaths_element.get(0).checked
+    else
+      true
+  
+  self.stacked_element.change((event) ->
+    self.redraw()
+  )
+  self.confirmed_element.change((event) ->
+    self.redraw()
+  )
+  self.deaths_element.change((event) ->
+    self.redraw()
+  )
+
+  self.chart = new Chart(self.canvas_element.get(0).getContext('2d'), {
+    type: 'line',
+    data: {
+        labels: []
+        datasets: []
+    },
+    options: {
+      scales: {
+        xAxes: [{
+          type: 'time',
+          distribution: 'linear',
+        }],
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      }
+    }
+  })
+
+  self.redraw = () ->
+    redraw(self.chart, self.stacked(), self.confirmed(), self.deaths(), self.datasetConfigs)
+  
+  self.updateData = (url) ->
+    self.canvas_element.hide()
+    self.loading_element.show()
     with_data(url, (data) ->
       data = consolidate(data)
-      $(loading_id).hide()
-      $(chart_id).show()
+      self.loading_element.hide()
+      self.canvas_element.show()
       self.chart.data.labels = $.map(data, (datum) -> new Date(datum.created_at))
-      self.chart.data.datasets = [
-        datasetConfig('Confirmed', $.map(data, (datum) -> datum.confirmed || NaN), 'rgba(255, 0, 0, 1)', fill, pointStyle),
-        datasetConfig('Deaths',    $.map(data, (datum) -> datum.deaths || NaN),    'rgba(0, 0, 0, 1)',   fill, pointStyle)
+      self.datasetConfigs = [
+        datasetConfig('Confirmed', $.map(data, (datum) -> datum['confirmed'] || NaN), 'rgba(255, 0, 0, 1)', self.stacked(), pointStyle)
+        datasetConfig('Deaths', $.map(data, (datum) -> datum['deaths'] || NaN), 'rgba(0, 0, 0, 1)', self.stacked(), pointStyle)
       ]
-      self.chart.update()
+      self.redraw()
     )
   return self

@@ -6,34 +6,40 @@
       %table.table
         %tbody
           %tr
-            %td{ width: "50%" }
-              #chart1{ style: "display: none;" }
-                %canvas{ width: 400, height: 200 }
-              #loading1{ style: "display: none;" }
-                Loading...
-            %td{ width: "50%" }
-              #chart2{ style: "display: none;" }
-                %canvas{ width: 400, height: 200 }
-              #loading2{ style: "display: none;" }
-                Loading...
-          %tr
-            %td
-              = form_tag('#', method: :get, class: "form-inline my-2 my-lg-0") do
-                = select_tag("country1", options_for_select([['Select Country', '']] + Region.all.map{ |r| [r.country, r.country] }.uniq.sort, params[:country1]), value: params[:country1])
-            %td
-              = form_tag('#', method: :get, class: "form-inline my-2 my-lg-0") do
-                = select_tag("country2", options_for_select([['Select Country', '']] + Region.all.map{ |r| [r.country, r.country] }.uniq.sort, params[:country2]), value: params[:country2])
-          %tr
             %td{ colspan: 2 }
               .custom-control.custom-switch
                 %input.custom-control-input#stacked-switch{ type: "checkbox" }
                 %label.custom-control-label{ for: "stacked-switch" } Stacked Chart
+              .custom-control.custom-switch
+                %input.custom-control-input#confirmed{ type: "checkbox", checked: true }
+                %label.custom-control-label{ for: "confirmed" } Show Confirmed
+              .custom-control.custom-switch
+                %input.custom-control-input#deaths{ type: "checkbox", checked: true }
+                %label.custom-control-label{ for: "deaths" } Show Deaths
+          %tr
+            %td
+              = form_tag('#', method: :get, class: "form-inline my-2 my-lg-0") do
+                = select_tag("country1", options_for_select([['Select Country', '']] + Region.all.map{ |r| [r.country, r.country] }.uniq.sort, params[:country1]), value: params[:country1], style: "margin: auto;")
+            %td
+              = form_tag('#', method: :get, class: "form-inline my-2 my-lg-0", style: "text-align: center;") do
+                = select_tag("country2", options_for_select([['Select Country', '']] + Region.all.map{ |r| [r.country, r.country] }.uniq.sort, params[:country2]), value: params[:country2], style: "margin: auto;")
+          %tr
+            %td{ width: "50%" }
+              #chart1
+                %canvas{ width: 400, height: 200, style: "display: none;" }
+                .loading{ style: "display: none;" }
+                  Loading...
+            %td{ width: "50%" }
+              #chart2
+                %canvas{ width: 400, height: 200, style: "display: none;" }
+                .loading{ style: "display: none;" }
+                  Loading...
           %tr
             %td{ colspan: 2 }
-              #chart3{ style: "display: none;" }
-                %canvas{ width: 400, height: 200 }
-              #loading3{ style: "display: none;" }
-                Loading...
+              #chart3
+                %canvas{ width: 400, height: 200, style: "display: none;" }
+                .loading{ style: "display: none;" }
+                  Loading...
 :javascript
   var country1 = '#{params[:country1]}';
   var country2 = '#{params[:country2]}';
@@ -41,15 +47,15 @@
   $(function() {
     $('#country1').val(country1);
     $('#country2').val(country2);
-    chart1 = new ReportChart('#loading1', '#chart1', '#stacked-switch', 'rect')
+    chart1 = new ReportChart('#chart1', 'rect')
     if (country1 && country1 != '') {
       chart1.updateData('/reports/by_country/' + country1 + '.json')
     }
-    chart2 = new ReportChart('#loading2', '#chart2', '#stacked-switch', 'triangle')
+    chart2 = new ReportChart('#chart2', 'triangle')
     if (country2 && country2 != '') {
       chart2.updateData('/reports/by_country/' + country2 + '.json')
     }
-    chart3 = new ReportChart2('#loading3', '#chart3', null, 'rect', 'triangle')
+    chart3 = new ReportChart2('#chart3', 'rect', 'triangle')
     $('#country1').change(function (event) {
       country1 = $('#country1').val();
       if (country1 && country1 != '') {

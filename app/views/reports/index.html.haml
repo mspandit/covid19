@@ -21,13 +21,7 @@
       = form_tag('#', method: :get, class: "form-inline") do
         = select_tag("country", options_for_select([['Select Country', nil]] + Region.all.map{ |r| [r.country, r.country] }.uniq.sort))
         %button.btn.btn-primary{ type: "submit" } Go
-      #chart{ style: "display: none;" }
-        %canvas{ width: 400, height: 200 }
-        .custom-control.custom-switch
-          %input.custom-control-input#stacked-switch{ type: "checkbox" }
-          %label.custom-control-label{ for: "stacked-switch" } Stacked Chart
-      #loading
-        Loading...
+      = render 'chart'
       %p
         Click a region or country for specific reports and chart.
       %table.table
@@ -51,7 +45,7 @@
       = paginate @reports
 :javascript
   $(function() {
-    chart = new ReportChart('#loading', '#chart', '#stacked-switch')
+    chart = new ReportChart('#chart')
     chart.updateData('#{reports_url(format: :json)}')
     $('form').attr('action', "/reports/by_country/" + $('form select').val() + ".html");
     $('form').change(function (event) {

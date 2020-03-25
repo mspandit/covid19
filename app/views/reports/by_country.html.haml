@@ -10,11 +10,7 @@
         = pluralize(@reports_length, "Reports") 
         for 
         = params[:country]
-      #chart{ style: "display: none;" }
-        %canvas{ width: 400, height: 200 }
-        .custom-control.custom-switch
-          %input.custom-control-input#stacked-switch{ type: "checkbox" }
-          %label.custom-control-label{ for: "stacked-switch" } Stacked Chart
+      = render 'chart'
       #loading
         Loading...
       = link_to("Compare with another country...", country_comparison_reports_path(country1: params[:country]))
@@ -38,6 +34,6 @@
       = paginate @reports
 :javascript
   $(function() {
-    chart = new ReportChart('#loading', '#chart', '#stacked-switch')
+    chart = new ReportChart('#chart')
     chart.updateData('#{by_country_reports_url(country: params[:country], format: :json)}')
   });
