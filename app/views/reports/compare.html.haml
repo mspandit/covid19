@@ -56,6 +56,9 @@
       chart2.updateData('/reports/by_country/' + country2 + '.json')
     }
     chart3 = new ReportChart2('#chart3', 'rect', 'triangle')
+    if (country1 && country1 != '' && country2 && country2 != '') {
+      chart3.updateData(country1, '/reports/by_country/' + country1 + '.json', country2, '/reports/by_country/' + country2 + '.json')
+    }
     $('#country1').change(function (event) {
       country1 = $('#country1').val();
       if (country1 && country1 != '') {

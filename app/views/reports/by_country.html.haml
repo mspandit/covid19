@@ -11,8 +11,6 @@
         for 
         = params[:country]
       = render 'chart'
-      #loading
-        Loading...
       = link_to("Compare with another country...", country_comparison_reports_path(country1: params[:country]))
       %table.table
         %thead
