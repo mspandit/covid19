@@ -49,8 +49,8 @@ class UsReportsController < ApplicationController
 
   # POST /us_reports/SECRET.json
   def secret_create
-    @us_report = UsReport.new(us_report_params)
-
+    @us_report = UsReport.find_or_create_by(state: us_report_params[:state], county: us_report_params[:county], created_at: us_report_params[:created_at])
+    @us_report.cases = us_report_params[:cases] ? us_report_params[:cases] : @us_us_report_params.cases
     respond_to do |format|
       if @us_report.save
         format.html { redirect_to @us_report, notice: 'Us report was successfully created.' }
