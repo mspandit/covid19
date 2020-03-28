@@ -1,0 +1,27 @@
+= javascript_include_tag '/javascripts/jquery-ui.min.js'
+= javascript_include_tag '/javascripts/raphael-min.js'
+= javascript_include_tag '/javascripts/jquery.usmap.js'
+.container-fluid
+  .row
+    .col-md-1
+    .col-md-10
+      %h1
+        US Reports
+      %p
+        Source:
+        = link_to "The New York Times", "https://www.nytimes.com/article/coronavirus-county-data-us.html"
+      %p
+        Click any state for a chart.
+      %table.table
+        %tbody
+          %tr
+            %td
+              #map{ style: "width: 600px; height: 400px; margin: auto;" }
+          %tr
+            %td
+              %h2#state-name
+              = render 'reports/chart'
+:javascript
+      $(document).ready(function() {
+        m = ReportUSMap('#map', '#chart')
+      })

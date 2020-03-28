@@ -1,0 +1,37 @@
+<%= form_with(model: us_report, local: true) do |form| %>
+  <% if us_report.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(us_report.errors.count, "error") %> prohibited this us_report from being saved:</h2>
+
+      <ul>
+      <% us_report.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :county %>
+    <%= form.text_field :county %>
+  </div>
+
+  <div class="field">
+    <%= form.label :state %>
+    <%= form.text_field :state %>
+  </div>
+
+  <div class="field">
+    <%= form.label :cases %>
+    <%= form.number_field :cases %>
+  </div>
+
+  <div class="field">
+    <%= form.label :deaths %>
+    <%= form.number_field :deaths %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

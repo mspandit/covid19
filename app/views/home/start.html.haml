@@ -2,16 +2,14 @@
   .row
     .col-md-1
     .col-md-10
-      .alert.alert-danger 
-        Due to the difficulty of obtaining reliable data, Johns Hopkins University is 
-        = link_to "no longer publishing", "https://github.com/CSSEGISandData/COVID-19/issues/1250" 
-        reports of recovered cases.
       %table.table
         %thead
           %th
             %h1{ style: "text-align: center;" }= link_to "Papers", papers_path 
           %th
-            %h1{ style: "text-align: center;" }= link_to "Reports", reports_path
+            %h1{ style: "text-align: center;" }= link_to "Global Reports", reports_path
+          %th
+            %h1{ style: "text-align: center;" }= link_to "US State Reports", us_reports_path
           %th
             %h1{ style: "text-align: center;" }= link_to "Q & A", questions_path
         %tbody
@@ -20,6 +18,8 @@
             = link_to "COVID-19 Open Research Dataset (CORD-19)", "https://pages.semanticscholar.org/coronavirus-research"
           %td
             View daily reports and charts of disease progression globally, by country, or by region.
+          %td
+            Detailed reports on US states.
           %td
             Get answers to your questions directly from trustworthy data sources. Courtesy
             = link_to "deepset GmbH", "https://deepset.ai"

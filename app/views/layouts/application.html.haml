@@ -13,21 +13,23 @@
     %meta{ property: "og:title", content: @title }
     %meta{ property: "og:image", content: image_url('virus_meta.png') }
     %meta{ property: "og:description", content: "Charts of daily COVID-19 reports by country and region. Full-text searching of the titles, abstracts, and text of 9,000 scholarly articles about COVID-19 and coronaviruses."}
-    %meta{ property: "og:url", content: root_url }
+    %meta{ property: "og:url", content: root_path }
   %body
     %nav.navbar.navbar-expand-lg.navbar-light.bg-light
-      = link_to root_url, { class: "navbar-brand", title: "COVID-19 Data and Research" }, class: "btn btn-primary" do
+      = link_to root_path, { class: "navbar-brand", title: "COVID-19 Data and Research" }, class: "btn btn-primary" do
         = image_tag 'virus.png', style: "height: 45px;"
       %button.navbar-toggler{ type: "button", :"data-toggle" => "collapse", :"data-target" => "#bs-example-navbar-collapse-1", style: "margin-right: 149px;" }
         %span.navbar-toggler-icon
       .collapse.navbar-collapse#bs-example-navbar-collapse-1
         %ul.navbar-nav.mr-auto
           %li.nav-item
-            = link_to "Papers", papers_url, class: "nav-link"
+            = link_to "Papers", papers_path, class: "nav-link"
           %li.nav-item
-            = link_to "Reports", reports_url, class: "nav-link"
+            = link_to "Global Reports", reports_path, class: "nav-link"
           %li.nav-item
-            = link_to "Q & A", questions_url, class: "nav-link"
+            = link_to "US State Reports", us_reports_path, class: "nav-link"
+          %li.nav-item
+            = link_to "Q & A", questions_path, class: "nav-link"
     = link_to "https://github.com/mspandit/covid19", style: "position: absolute; right: 0; top: 0;" do
       = image_tag("https://github.blog/wp-content/uploads/2008/12/forkme_right_red_aa0000.png", width: 149, height: 149, class: "attachment-full size-full", alt: "Fork me on GitHub", "data-recalc-dims": 1)
 

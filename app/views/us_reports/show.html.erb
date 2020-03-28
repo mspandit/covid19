@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>County:</strong>
+  <%= @us_report.county %>
+</p>
+
+<p>
+  <strong>State:</strong>
+  <%= @us_report.state %>
+</p>
+
+<p>
+  <strong>Cases:</strong>
+  <%= @us_report.cases %>
+</p>
+
+<p>
+  <strong>Deaths:</strong>
+  <%= @us_report.deaths %>
+</p>
+
+<%= link_to 'Edit', edit_us_report_path(@us_report) %> |
+<%= link_to 'Back', us_reports_path %>

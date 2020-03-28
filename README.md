@@ -14,10 +14,13 @@ The CORD-19 dataset is quite large and not suitable for inclusion in a `git` rep
 1. Download and decompress the [CORD-19 commercial use subset](https://pages.semanticscholar.org/coronavirus-research).
 
 2. Copy the `comm_use_subset` directory into the local `public` directory. (If you use a different directory, you will
-have to edit `db/seeds.rb`.)
+have to edit `db/seed_papers.rb`.)
 
 3. Clone the [2019 Novel Coronavirus COVID-19 (2019-nCoV) Data Repository by Johns Hopkins CSSE](https://github.com/CSSEGISandData/COVID-19)
 into a directory next to the one for this repo. (If you use a different directory, you will have to edit `db/seeds_jhu.rb`.)
+
+4. Clone the New York Times [Coronavirus (Covid-19) Data in the United States](https://github.com/nytimes/covid-19-data) repository 
+into a directory next to the one for this repo. (If you use a different directory, you will have to edit `db/seeds_nyt.rb`.)
 
 ## Development
 
@@ -28,10 +31,13 @@ running locally.
 
 2. Choose a secret (e.g. 1234) and run the application with `SECRET=1234 rails s`.
 
-3. Using the same secret, run the seed script with `SECRET=1234 RAILS_ENV=development ruby db/seeds.rb`. This script will
+3. Using the same secret, run the seed script with `SECRET=1234 RAILS_ENV=development ruby db/seed_papers.rb`. This script will
 read through the dataset and POST to the application to create database records.
 
 4. Using the same secret, run the seed script with `SECRET=1234 RAILS_ENV=development ruby db/seeds_jhu.rb`. This script
+will read through the repository and POST to the application to create database records
+
+5. Using the same secret, run the seed script with `SECRET=1234 RAILS_ENV=development ruby db/seeds_nyt.rb`. This script
 will read through the repository and POST to the application to create database records
 
 ## Deployment
@@ -44,8 +50,11 @@ remotely.
 
 2. Choose a secret (e.g. 1234) and run the remote application with `SECRET=1234`.
 
-3. Using the same secret, run the seed script with `SECRET=1234 ruby db/seeds.rb`. This script will read through the
+3. Using the same secret, run the seed script with `SECRET=1234 ruby db/seed_papers.rb`. This script will read through the
 dataset and POST to the application to create database records.
 
 4. Using the same secret, run the seed script with `SECRET=1234 ruby db/seeds_jhu.rb`. This script will read through the
+repository and POST to the application to create database records
+
+4. Using the same secret, run the seed script with `SECRET=1234 ruby db/seeds_nyt.rb`. This script will read through the
 repository and POST to the application to create database records

@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+  resources :us_reports do
+    collection do
+      post SECRET => 'us_reports#secret_create'
+      get 'state/:state' => 'us_reports#state', as: "state"
+    end
+  end
   resources :questions do
     member do
       post 'ask' => "questions#ask"

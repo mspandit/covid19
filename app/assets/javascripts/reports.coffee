@@ -1,8 +1,6 @@
 # Place all the behaviors and hooks related to the matching controller here.
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
-@render = (labels, data) ->
-  
 sameday = (first, second) ->
   first = new Date(first)
   second = new Date(second)
@@ -263,4 +261,90 @@ merge = (data1, data2) ->
       ]
       self.redraw()
     )
+  return self
+
+@ReportUSMap = (map_id, chart_id, pointStyle='circle') ->
+  self = this
+  self.map_element = $(map_id)
+  self.loading_element = $(chart_id + ' .loading')
+  self.loading_element.hide()
+  self.canvas_element = $(chart_id + ' canvas')
+  self.stacked_element = $('#stacked-switch')
+  self.stacked = () ->
+    if self.stacked_element.length != 0
+      self.stacked_element.get(0).checked
+    else
+      false
+  self.confirmed_element = $('#confirmed')
+  self.confirmed = () ->
+    if self.confirmed_element.length != 0
+      self.confirmed_element.get(0).checked
+    else
+      true
+  self.deaths_element = $('#deaths')
+  self.deaths = () ->
+    if self.deaths_element.length != 0
+      self.deaths_element.get(0).checked
+    else
+      true
+  
+  self.stacked_element.change((event) ->
+    self.redraw()
+  )
+  self.confirmed_element.change((event) ->
+    self.redraw()
+  )
+  self.deaths_element.change((event) ->
+    self.redraw()
+  )
+
+  self.chart = new Chart(self.canvas_element.get(0).getContext('2d'), {
+    type: 'line',
+    data: {
+        labels: []
+        datasets: []
+    },
+    options: {
+      scales: {
+        xAxes: [{
+          type: 'time',
+          distribution: 'linear',
+        }],
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      }
+    }
+  })
+
+  self.redraw = () ->
+    redraw(self.chart, self.stacked(), self.confirmed(), self.deaths(), self.datasetConfigs)
+
+  self.handler = (data) ->
+    $('#state-name').text(data[0].state)
+    self.loading_element.hide()
+    self.canvas_element.show()
+    self.chart.data.labels = $.map(data, (datum) -> new Date(datum.created_at))
+    self.datasetConfigs = [
+      datasetConfig('Confirmed', $.map(data, (datum) -> datum['cases'] || NaN), 'rgba(255, 0, 0, 1)', self.stacked(), pointStyle),
+      datasetConfig('Deaths', $.map(data, (datum) -> datum['deaths'] || NaN), 'rgba(0, 0, 0, 1)', self.stacked(), pointStyle)
+    ]
+    self.redraw()
+    
+  self.map_element.usmap({
+    click: (event, data) ->
+      self.loading_element.show()
+      $.ajax({
+        url: '/us_reports/state/' + data.name,
+        dataType: 'json',
+        success: (data, textStatus, jqXHR) ->
+          self.handler(data)
+        error: (jqXHR, textStatus, errorThrown) ->
+          console.log(jqXHR, textStatus, errorThrown)
+      })
+    stateHoverStyles: { fill: '#11c'}
+  });
+  
   return self
