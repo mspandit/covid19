@@ -11,7 +11,7 @@ class UsReportsController < ApplicationController
   
   # GET /us_reports/state/AL.json
   def state
-    @us_reports = UsReport.where(state: UsReport.long(params[:state]), county: nil)
+    @us_reports = UsReport.where(state: UsReport.long(params[:state]), county: nil).order(created_at: :asc)
     respond_to do |format|
       format.json { render json: @us_reports.to_json, status: :ok }
     end
@@ -50,7 +50,8 @@ class UsReportsController < ApplicationController
   # POST /us_reports/SECRET.json
   def secret_create
     @us_report = UsReport.find_or_create_by(state: us_report_params[:state], county: us_report_params[:county], created_at: us_report_params[:created_at])
-    @us_report.cases = us_report_params[:cases] ? us_report_params[:cases] : @us_us_report_params.cases
+    @us_report.cases = us_report_params[:cases] ? us_report_params[:cases] : @us_report.cases
+    @us_report.deaths = us_report_params[:deaths] ? us_report_params[:deaths]: @us_report.deaths
     respond_to do |format|
       if @us_report.save
         format.html { redirect_to @us_report, notice: 'Us report was successfully created.' }
