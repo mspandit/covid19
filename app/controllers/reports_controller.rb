@@ -76,10 +76,19 @@ class ReportsController < ApplicationController
   end
 
   def secret_create
-    @report = Report.find_or_create_by(region_id: report_params[:region_id], created_at: report_params[:created_at])
-    @report.confirmed = report_params[:confirmed] ? report_params[:confirmed] : @report.confirmed
-    @report.deaths = report_params[:deaths] ? report_params[:deaths] : @report.deaths
-
+    if params[:data]
+      JSON.parse(params[:data]).each do |report|
+        puts report
+        @report = Report.find_or_create_by(region_id: report["region_id"], created_at: report["created_at"])
+        @report.confirmed = report["confirmed"] ? report["confirmed"] : @report.confirmed
+        @report.deaths = report["deaths"] ? report["deaths"] : @report.deaths
+        @report.save
+      end
+    else
+      @report = Report.find_or_create_by(region_id: report_params[:region_id], created_at: report_params[:created_at])
+      @report.confirmed = report_params[:confirmed] ? report_params[:confirmed] : @report.confirmed
+      @report.deaths = report_params[:deaths] ? report_params[:deaths] : @report.deaths
+    end
     respond_to do |format|
       if @report.save
         format.html { redirect_to @report, notice: 'Report was successfully created.' }

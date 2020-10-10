@@ -22,6 +22,14 @@ into a directory next to the one for this repo. (If you use a different director
 4. Clone the New York Times [Coronavirus (Covid-19) Data in the United States](https://github.com/nytimes/covid-19-data) repository 
 into a directory next to the one for this repo. (If you use a different directory, you will have to edit `db/seeds_nyt.rb`.)
 
+## Database initialization
+
+See [Heroku](https://devcenter.heroku.com/articles/heroku-postgres-import-export#export).
+
+1. `heroku pg:backups:capture`
+2. `heroku pg:backups:download`
+3. `pg_restore --verbose --clean --no-acl --no-owner -h localhost -d novelcovid19_development latest.dump`
+
 ## Development
 
 The following procedure can be used to populate the database from the dataset and repository, if the application is

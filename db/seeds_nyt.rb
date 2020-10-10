@@ -21,14 +21,20 @@ else
 end
 
 def process(states_file, counties_file)
+  data = []
   CSV.parse(open(Dir[ROOT_DIR + states_file].first).read, headers: true).tqdm.each do |row|
-    Faraday.post(
-      "#{ROOT_URL}us_reports/#{SECRET}.json",
-      "us_report[created_at]": DateTime.strptime(row['date'], "%Y-%m-%d"),
-      "us_report[state]": row['state'],
-      "us_report[cases]": row['cases'],
-      "us_report[deaths]": row['deaths']
-    )
+    data.append({
+      us_report: {
+        created_at: DateTime.strptime(row['date'], "%Y-%m-%d"),
+        state: row['state'],
+        cases: row['cases'],
+        deaths: row['deaths']
+      }
+    })
+  end
+  Faraday.post("#{ROOT_URL}us_reports/#{SECRET}.json") do |req|
+    req.options.timeout = 600
+    req.body = "data=#{data.to_json}"
   end
 end
 

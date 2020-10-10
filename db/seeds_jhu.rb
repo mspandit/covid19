@@ -21,6 +21,7 @@ else
 end
 
 def process(time_series_file, db_field)
+  data = []
   CSV.parse(open(Dir[ROOT_DIR + time_series_file].first).read, headers: true).tqdm.each do |row|
     region_id = JSON.parse(
       Faraday.post(
@@ -32,17 +33,18 @@ def process(time_series_file, db_field)
       ).body
     )['id']
     (row.fields.length - 1..row.fields.length - 1).each do |column_index|
-      # puts column_index
-      # puts row.headers[column_index]
       created_at = DateTime.strptime(row.headers[column_index], "%m/%d/%y")
-      Faraday.post(
-        "#{ROOT_URL}reports/#{SECRET}.json",
-        "report[region_id]": region_id,
-        "report[created_at]": created_at,
-        "report[#{db_field}]": row.field(column_index)
-      )
+      data.append({
+        region_id: region_id,
+        created_at: created_at,
+        db_field => row.field(column_index)
+      })
     end
   end
+  Faraday.post(
+    "#{ROOT_URL}reports/#{SECRET}.json",
+    data: data.to_json
+  )
 end
 
 process('time_series_covid19_deaths_global.csv', 'deaths')
