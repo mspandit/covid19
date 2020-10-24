@@ -78,7 +78,6 @@ class ReportsController < ApplicationController
   def secret_create
     if params[:data]
       JSON.parse(params[:data]).each do |report|
-        puts report
         @report = Report.find_or_create_by(region_id: report["region_id"], created_at: report["created_at"])
         @report.confirmed = report["confirmed"] ? report["confirmed"] : @report.confirmed
         @report.deaths = report["deaths"] ? report["deaths"] : @report.deaths

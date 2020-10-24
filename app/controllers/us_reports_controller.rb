@@ -51,15 +51,15 @@ class UsReportsController < ApplicationController
   def secret_create
     if params[:data]
       JSON.parse(params[:data]).each do |us_report|
-        @us_report = UsReport.find_or_create_by(state: us_report["state"], county: us_report[:county], created_at: us_report["created_at"])
+        @us_report = UsReport.find_or_create_by(state: us_report["state"], county: us_report["county"], created_at: us_report["created_at"])
         @us_report.cases = us_report["cases"] ? us_report["cases"] : @us_report.cases
-        @us_report.deaths = us_report["deaths"] ? us_report["deaths"]: @us_report.deaths
+        @us_report.deaths = us_report["deaths"] ? us_report["deaths"] : @us_report.deaths
         @us_report.save
       end
     else
       @us_report = UsReport.find_or_create_by(state: us_report_params[:state], county: us_report_params[:county], created_at: us_report_params[:created_at])
       @us_report.cases = us_report_params[:cases] ? us_report_params[:cases] : @us_report.cases
-      @us_report.deaths = us_report_params[:deaths] ? us_report_params[:deaths]: @us_report.deaths
+      @us_report.deaths = us_report_params[:deaths] ? us_report_params[:deaths] : @us_report.deaths
     end
     respond_to do |format|
       if @us_report.save
