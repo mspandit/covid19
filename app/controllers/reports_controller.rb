@@ -6,13 +6,12 @@ class ReportsController < ApplicationController
   # GET /reports
   # GET /reports.json
   def index
-    all = Report.includes(:region).order(created_at: :asc)
     respond_to do |format|
       format.html do
-        @reports_length = all.length
-        @reports = all.page params[:page]
+        @reports_length = Report.count
+        @reports = Report.includes(:region).order(created_at: :asc).page params[:page]
       end
-      format.json { render json: all.to_json, status: :ok }
+      format.json { render json: Report.includes(:region).order(created_at: :asc).to_json, status: :ok }
     end
   end
 
